@@ -1,0 +1,15 @@
+const jwt = require("jsonwebtoken");
+const SECRET = "SECRET123";
+
+module.exports = function (req, res, next) {
+  const token = req.header("Authorization")?.replace("Bearer ", "");
+  if (!token) return res.status(401).json({ message: "No token, access denied" });
+
+  try {
+    const decoded = jwt.verify(token, SECRET);
+    req.user = decoded.userId;
+    next();
+  } catch {
+    res.status(401).json({ message: "Invalid token" });
+  }
+};
